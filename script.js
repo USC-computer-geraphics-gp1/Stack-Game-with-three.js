@@ -57,3 +57,33 @@ var Stage = /** @class */ (function () {
     };
     return Stage;
 }());
+var Block = /** @class */ (function () {
+    function Block(block) {
+        // set size and position
+        this.STATES = { ACTIVE: 'active', STOPPED: 'stopped', MISSED: 'missed' };
+        this.MOVE_AMOUNT = 12;
+        this.dimension = { width: 0, height: 0, depth: 0 };
+        this.position = { x: 0, y: 0, z: 0 };
+        this.targetBlock = block;
+        this.index = (this.targetBlock ? this.targetBlock.index : 0) + 1;
+        this.workingPlane = this.index % 2 ? 'x' : 'z';
+        this.workingDimension = this.index % 2 ? 'width' : 'depth';
+        // set the dimensions from the target block, or defaults.
+        this.dimension.width = this.targetBlock ? this.targetBlock.dimension.width : 10;
+        this.dimension.height = this.targetBlock ? this.targetBlock.dimension.height : 2;
+        this.dimension.depth = this.targetBlock ? this.targetBlock.dimension.depth : 10;
+        this.position.x = this.targetBlock ? this.targetBlock.position.x : 0;
+        this.position.y = this.dimension.height * this.index;
+        this.position.z = this.targetBlock ? this.targetBlock.position.z : 0;
+        this.colorOffset = this.targetBlock ? this.targetBlock.colorOffset : Math.round(Math.random() * 100);
+        // set color
+        if (!this.targetBlock) {
+            this.color = 0x333344;
+        }
+        else {
+            var offset = this.index + this.colorOffset;
+            var r = Math.sin(0.3 * offset) * 55 + 200;
+            var g = Math.sin(0.3 * offset + 2) * 55 + 200;
+            var b = Math.sin(0.3 * offset + 4) * 55 + 200;
+            this.color = new THREE.Color(r / 255, g / 255, b / 255);
+        }
