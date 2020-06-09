@@ -122,3 +122,47 @@ var Block = /** @class */ (function () {
             this.dimension.width = this.targetBlock.dimension.width;
             this.dimension.depth = this.targetBlock.dimension.depth;
         }
+        if (overlap > 0) {
+            var choppedDimensions = { width: this.dimension.width, height: this.dimension.height, depth: this.dimension.depth };
+            choppedDimensions[this.workingDimension] -= overlap;
+            this.dimension[this.workingDimension] = overlap;
+            var placedGeometry = new THREE.BoxGeometry(this.dimension.width, this.dimension.height, this.dimension.depth);
+            placedGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.dimension.width / 2, this.dimension.height / 2, this.dimension.depth / 2));
+            var placedMesh = new THREE.Mesh(placedGeometry, this.material);
+            var choppedGeometry = new THREE.BoxGeometry(choppedDimensions.width, choppedDimensions.height, choppedDimensions.depth);
+            choppedGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(choppedDimensions.width / 2, choppedDimensions.height / 2, choppedDimensions.depth / 2));
+            var choppedMesh = new THREE.Mesh(choppedGeometry, this.material);
+            var choppedPosition = {
+                x: this.position.x,
+                y: this.position.y,
+                z: this.position.z
+            };
+            if (this.position[this.workingPlane] < this.targetBlock.position[this.workingPlane]) {
+                this.position[this.workingPlane] = this.targetBlock.position[this.workingPlane];
+            }
+            else {
+                choppedPosition[this.workingPlane] += overlap;
+            }
+            placedMesh.position.set(this.position.x, this.position.y, this.position.z);
+            choppedMesh.position.set(choppedPosition.x, choppedPosition.y, choppedPosition.z);
+            blocksToReturn.placed = placedMesh;
+            if (!blocksToReturn.bonus)
+                blocksToReturn.chopped = choppedMesh;
+        }
+        else {
+            this.state = this.STATES.MISSED;
+        }
+        this.dimension[this.workingDimension] = overlap;
+        return blocksToReturn;
+    };
+    Block.prototype.tick = function () {
+        if (this.state == this.STATES.ACTIVE) {
+            var value = this.position[this.workingPlane];
+            if (value > this.MOVE_AMOUNT || value < -this.MOVE_AMOUNT)
+                this.reverseDirection();
+            this.position[this.workingPlane] += this.direction;
+            this.mesh.position[this.workingPlane] = this.position[this.workingPlane];
+        }
+    };
+    return Block;
+}());
