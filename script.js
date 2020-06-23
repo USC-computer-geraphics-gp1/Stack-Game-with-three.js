@@ -27,11 +27,11 @@ var Stage = /** @class */ (function () {
         this.scene = new THREE.Scene();
         // camera
         var aspect = window.innerWidth / window.innerHeight;
-        var d = 20;
+        var d = 22;
         this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, -100, 1000);
-        this.camera.position.x = 2;
-        this.camera.position.y = 2;
-        this.camera.position.z = 2;
+        this.camera.position.x = 4;
+        this.camera.position.y = 4;
+        this.camera.position.z = 4;
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         //light
         this.light = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -249,13 +249,7 @@ var Block = /** @class */ (function () {
         if (!this.targetBlock) {
             this.color = 0x333344;
         }
-        else {
-            var offset = this.index + this.colorOffset;
-            var r = Math.sin(0.3 * offset) * 55 + 200;
-            var g = Math.sin(0.3 * offset + 2) * 55 + 200;
-            var b = Math.sin(0.3 * offset + 4) * 55 + 200;
-            this.color = new THREE.Color(r / 255, g / 255, b / 255);
-        }
+       
         // state
         this.state = this.index > 1 ? this.STATES.ACTIVE : this.STATES.STOPPED;
         // set direction
@@ -309,12 +303,7 @@ var Block = /** @class */ (function () {
             if (this.position[this.workingPlane] < this.targetBlock.position[this.workingPlane]) {
                 this.position[this.workingPlane] = this.targetBlock.position[this.workingPlane];
             }
-            else {
-                choppedPosition[this.workingPlane] += overlap;
-            }
-            placedMesh.position.set(this.position.x, this.position.y, this.position.z);
-            choppedMesh.position.set(choppedPosition.x, choppedPosition.y, choppedPosition.z);
-            blocksToReturn.placed = placedMesh;
+            
             if (!blocksToReturn.bonus)
                 blocksToReturn.chopped = choppedMesh;
         }
