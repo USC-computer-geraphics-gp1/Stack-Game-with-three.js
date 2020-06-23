@@ -14,14 +14,14 @@ html, body {
 }
 #container #score {
   position: absolute;
-  top: 20px;
+  top: 28px;
   width: 100%;
-  text-align: center;
-  font-size: 10vh;
+  text-align:right;
+  font-size: 9vh;
   -webkit-transition: -webkit-transform 0.5s ease;
   transition: -webkit-transform 0.5s ease;
-  transition: transform 0.5s ease;
-  transition: transform 0.5s ease, -webkit-transform 0.5s ease;
+  transition: transform 0.7s ease;
+  transition: transform 0.7s ease, -webkit-transform 0.7s ease;
   color: #333344;
   -webkit-transform: translatey(-200px) scale(1);
           transform: translatey(-200px) scale(1);
@@ -37,8 +37,8 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 85%;
+  width: 110%;
+  height: 87%;
   display: -webkit-box;
   display: flex;
   -webkit-box-orient: vertical;
@@ -92,4 +92,44 @@ html, body {
   background-color: transparent;
   color: #333344;
   font-size: 30px;
+}
+#container #instructions {
+  position: absolute;
+  width: 100%;
+  top: 16vh;
+  left: 0;
+  text-align: center;
+  -webkit-transition: opacity 0.5s ease, -webkit-transform 0.5s ease;
+  transition: opacity 0.5s ease, -webkit-transform 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease, -webkit-transform 0.5s ease;
+  opacity: 0;
+}
+#container #instructions.hide {
+  opacity: 0 !important;
+}
+#container.playing #score, #container.resetting #score {
+  -webkit-transform: translatey(0px) scale(1);
+          transform: translatey(0px) scale(1);
+}
+#container.playing #instructions {
+  opacity: 1;
+}
+#container.ready .game-ready #start-button {
+  opacity: 1;
+  -webkit-transform: translatey(0);
+          transform: translatey(0);
+}
+#container.ended #score {
+  -webkit-transform: translatey(6vh) scale(1.5);
+          transform: translatey(6vh) scale(1.5);
+}
+#container.ended .game-over * {
+  opacity: 1;
+  -webkit-transform: translatey(0);
+          transform: translatey(0);
+}
+#container.ended .game-over p {
+  -webkit-transition-delay: 0.3s;
+          transition-delay: 0.3s;
 }
