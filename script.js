@@ -7,35 +7,54 @@ var Stage = /** @class */ (function () {
         this.render = function () {    
             this.renderer.render(this.scene, this.camera);
         };
+		// برای اضافه کردن اشیا در صحنه 
         this.add = function (elem) {
             this.scene.add(elem);
         };
+		//برای حذف اشیا از صحنه
+
         this.remove = function (elem) {
             this.scene.remove(elem);
         };
         this.container = document.getElementById('game');
         // renderer
+		//رسم اشیا در قالب web GL
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: false
         });
+		//به اندازه پنجرمون (عرض وطول) اندازه را تنظیم میکنیم
+
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+		 //برای رنگ پس زمینه مانند ساختار تحت وب رنگ را میدهیم
+
         this.renderer.setClearColor('#D0CBC7', 1);
         this.container.appendChild(this.renderer.domElement);
         // scene
+		//برای ساختن صحنه جدید
+
         this.scene = new THREE.Scene();
         // camera
+		//درواقع به renderer میگه با چه نمایی نشون بده 
+
         var aspect = window.innerWidth / window.innerHeight;
         var d = 20;
+		 //تعریف camera
+
         this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, -100, 1000);
+		//موقعیت دوربین نشون میده 
         this.camera.position.x = 2;
         this.camera.position.y = 2;
         this.camera.position.z = 2;
+		//نقطه تمرکز دوربین را نشون میده 
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         //light
+		//نور با پرتو موازی از منبع مشخص
         this.light = new THREE.DirectionalLight(0xffffff, 0.5);
         this.light.position.set(0, 499, 0);
         this.scene.add(this.light);
+		//همه صحنه را روشن ولی نه چندان زیاد یعنی نور محیط را مشخص میکند 
+		// مقادیر رنگ و شدت نورا معلوم میکنه 
         this.softLight = new THREE.AmbientLight(0xffffff, 0.4);
         this.scene.add(this.softLight);
         window.addEventListener('resize', function () { return _this.onResize(); });
@@ -60,8 +79,10 @@ var Stage = /** @class */ (function () {
 var Block = /** @class */ (function () {
     function Block(block) {
         // set size and position
+		// وتنظیم اندازه وموقعیت
         this.STATES = { ACTIVE: 'active', STOPPED: 'stopped', MISSED: 'missed' };
         this.MOVE_AMOUNT = 12;
+         //طول وعرض و عمق
         this.dimension = { width: 0, height: 0, depth: 0 };
         this.position = { x: 0, y: 0, z: 0 };
         this.targetBlock = block;
@@ -95,11 +116,16 @@ var Block = /** @class */ (function () {
             this.speed = -4;
         this.direction = this.speed;
         // create block
+		//برای ساختن بلوک های مکعبی  از تابع boxGeometry استفاده کردیم 
+		//طول وعرض وعمق را مشخص کردیم
         var geometry = new THREE.BoxGeometry(this.dimension.width, this.dimension.height, this.dimension.depth);
-        geometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.dimension.width / 2, this.dimension.height / 2, this.dimension.depth / 2));
-        this.material = new THREE.MeshToonMaterial({ color: this.color, shading: THREE.FlatShading });
-        this.mesh = new THREE.Mesh(geometry, this.material);
-        this.mesh.position.set(this.position.x, this.position.y + (this.state == this.STATES.ACTIVE ? 0 : 0), this.position.z);
+      	  geometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.dimension.width / 2, this.dimension.height / 2, this.dimension.depth / 2));
+       //متریال را از نوع MeshToonMaterial انتخاب کردیم 
+	   this.material = new THREE.MeshToonMaterial({ color: this.color, shading: THREE.FlatShading });
+      		//در واقع geometryوmaterial رو سر هم میکنه 
+	  this.mesh = new THREE.Mesh(geometry, this.material);
+       		//موقعیت مکعب ها رو تنظیم میکنیم 
+	   this.mesh.position.set(this.position.x, this.position.y + (this.state == this.STATES.ACTIVE ? 0 : 0), this.position.z);
         if (this.state == this.STATES.ACTIVE) {
             this.position[this.workingPlane] = Math.random() > 0.5 ? -this.MOVE_AMOUNT : this.MOVE_AMOUNT;
         }
