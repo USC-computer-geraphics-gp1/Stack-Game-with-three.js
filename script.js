@@ -89,7 +89,7 @@ var Block = /** @class */ (function () {
         this.index = (this.targetBlock ? this.targetBlock.index : 0) + 1;
         this.workingPlane = this.index % 2 ? 'x' : 'z';
         this.workingDimension = this.index % 2 ? 'width' : 'depth';
-        // set the dimensions from the target block, or defaults.
+        // مجموعه ای از ابعاد از بلوک هدف، و یا پیش فرض.
         this.dimension.width = this.targetBlock ? this.targetBlock.dimension.width : 10;
         this.dimension.height = this.targetBlock ? this.targetBlock.dimension.height : 2;
         this.dimension.depth = this.targetBlock ? this.targetBlock.dimension.depth : 10;
@@ -97,7 +97,7 @@ var Block = /** @class */ (function () {
         this.position.y = this.dimension.height * this.index;
         this.position.z = this.targetBlock ? this.targetBlock.position.z : 0;
         this.colorOffset = this.targetBlock ? this.targetBlock.colorOffset : Math.round(Math.random() * 100);
-        // set color
+        // رنگ دادن
         if (!this.targetBlock) {
             this.color = 0x333344;
         }
@@ -108,14 +108,14 @@ var Block = /** @class */ (function () {
             var b = Math.sin(0.3 * offset + 4) * 55 + 200;
             this.color = new THREE.Color(r / 255, g / 255, b / 255);
         }
-        // state
+        // وظعیت ها
         this.state = this.index > 1 ? this.STATES.ACTIVE : this.STATES.STOPPED;
-        // set direction
+        // تنظیم جهت
         this.speed = -0.1 - (this.index * 0.005);
         if (this.speed < -4)
             this.speed = -4;
         this.direction = this.speed;
-        // create block
+        // ساخت بلوک ها
 		//برای ساختن بلوک های مکعبی  از تابع boxGeometry استفاده کردیم 
 		//طول وعرض وعمق را مشخص کردیم
         var geometry = new THREE.BoxGeometry(this.dimension.width, this.dimension.height, this.dimension.depth);
@@ -130,9 +130,12 @@ var Block = /** @class */ (function () {
             this.position[this.workingPlane] = Math.random() > 0.5 ? -this.MOVE_AMOUNT : this.MOVE_AMOUNT;
         }
     }
+//موقعیت مکعب وقتی برای حرکت از جهت مخالف
     Block.prototype.reverseDirection = function () {
         this.direction = this.direction > 0 ? this.speed : Math.abs(this.speed);
     };
+
+// دستورات شرطی برای موقعیت های مختلف قرار گرفتن مکعب ها. اگر قسمتی قرار نگرفت اگر کامل روی هم قرار گرفت و اگر کاملا خارج افتاد
     Block.prototype.place = function () {
         this.state = this.STATES.STOPPED;
         var overlap = this.targetBlock.dimension[this.workingDimension] - Math.abs(this.position[this.workingPlane] - this.targetBlock.position[this.workingPlane]);
@@ -181,6 +184,7 @@ var Block = /** @class */ (function () {
         this.dimension[this.workingDimension] = overlap;
         return blocksToReturn;
     };
+//تعریف زمان و حرکت
     Block.prototype.tick = function () {
         if (this.state == this.STATES.ACTIVE) {
             var value = this.position[this.workingPlane];
@@ -194,6 +198,7 @@ var Block = /** @class */ (function () {
 }());
 var Game = /** @class */ (function () {
     function Game() {
+//استیت های مخلفت بازی
         var _this = this;
         this.STATES = {
             'LOADING': 'loading',
@@ -202,6 +207,7 @@ var Game = /** @class */ (function () {
             'ENDED': 'ended',
             'RESETTING': 'resetting'
         };
+// دریافت متفیر های مورد نیاز
         this.blocks = [];
         this.state = this.STATES.LOADING;
         this.stage = new Stage();
@@ -228,12 +234,14 @@ var Game = /** @class */ (function () {
         });
         
     }
+// فانکشن بروزرسانی وضعیت بازی
     Game.prototype.updateState = function (newState) {
         for (var key in this.STATES)
             this.mainContainer.classList.remove(this.STATES[key]);
         this.mainContainer.classList.add(newState);
         this.state = newState;
     };
+// وضعیت های مختلف بازی و فراخوانی فانکشن مورد نیاز
     Game.prototype.onAction = function () {
         switch (this.state) {
             case this.STATES.READY:
@@ -247,6 +255,7 @@ var Game = /** @class */ (function () {
                 break;
         }
     };
+// فانکشن شروع بازی
     Game.prototype.startGame = function () {
         if (this.state != this.STATES.PLAYING) {
             this.scoreContainer.innerHTML = '0';
@@ -254,6 +263,7 @@ var Game = /** @class */ (function () {
             this.addBlock();
         }
     };
+// فانکشن شروع دوباره بازی
     Game.prototype.restartGame = function () {
         var _this = this;
         this.updateState(this.STATES.RESETTING);
@@ -276,6 +286,7 @@ var Game = /** @class */ (function () {
             _this.startGame();
         }, cameraMoveSpeed * 1000);
     };
+// فانکشن قرار دادن مکعب ها
     Game.prototype.placeBlock = function () {
         var _this = this;
         var currentBlock = this.blocks[this.blocks.length - 1];
